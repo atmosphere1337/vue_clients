@@ -30,6 +30,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
   import {ref, watch, defineProps} from 'vue'
   const props = defineProps(['targetUser']);
@@ -38,7 +39,6 @@
   const LOCAL_STORAGE_NAME = 'clientsInfo';
 
   watch(() => props.targetUser, () => {
-    console.log('IM HERE', localStorage.getItem(LOCAL_STORAGE_NAME));
     const ls = JSON.parse(
       localStorage.getItem(LOCAL_STORAGE_NAME)
     );

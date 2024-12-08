@@ -94,7 +94,6 @@
   }
 
   const syncStateWithLocalStorage = () => {
-    console.log(localStorage.getItem(LOCAL_STORAGE_NAME));
     if (JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) == undefined) {
       localStorage.setItem(
         LOCAL_STORAGE_NAME,

@@ -10,13 +10,21 @@
       <font-awesome-icon icon="fa-magnifying-glass" />
     </div>
     </div>
-    <div v-if="showSearchOptions" style="position: absolute; border: solid; background-color: red; width: 100%">
-    <div v-for="user in usersFound" :key="user.id" @click="selectFoundUser(user.first_name, user.last_name)">
-      {{ `${user.first_name} ${user.last_name}` }}
-    </div>
+    <div
+      v-if="showSearchOptions"
+      style="position: absolute; border: solid; background-color: white; width: 100%"
+    >
+      <div
+        v-for="user in usersFound"
+        :key="user.id"
+        @click="selectFoundUser(user.first_name, user.last_name)"
+      >
+        {{ `${user.first_name} ${user.last_name}` }}
+      </div>
     </div>
   </div>
 </template>
+
 <script setup>
   import {ref, computed, defineProps, watch, defineEmits} from 'vue';
   const usernameToSearch = ref('');
