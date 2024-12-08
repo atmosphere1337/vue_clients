@@ -1,17 +1,21 @@
 <template>
-  <div id="container" style="display: flex; height: 100vh">
-    <div id="sidebar" v-show="showSidebar" style="width: 300px; border: solid; display: flex; flex-direction: column; padding: 10px; ">
-      <div style="display: flex; flex-direction: column; gap: 15px">
-        <div id="clients-rating-toggle" style="color: black; border: solid">
-          <button style="width: 50%; background-color: gray;" @click="() => listMode = 'clients'">Clients</button>
-          <button style="width: 50%" @click="() => listMode = 'rating'">Rating</button>
+  <div id="app-container">
+    <div id="app-sidebar" v-show="showSidebar">
+      <div id="app-sidebar-main">
+        <div id="clients-view-toggle">
+          <button id="clients-view-toggle-clients" @click="() => listMode = 'clients'">
+            Clients
+          </button>
+          <button id="clients-view-toggle-rating" @click="() => listMode = 'rating'">
+            Rating
+          </button>
         </div>
         <SearchBar
           v-if="listMode === 'clients'"
           :users="users"
           @onUserFoundEvent="userFoundEvent"
         />
-        <div style="display: flex; flex-direction: column; gap: 5px">
+        <div id="user-tab-container">
           <UserTab
             v-for="user in users"
             :key="user.id"
@@ -22,24 +26,22 @@
           />
         </div>
       </div>
-      <div id="sidebar-bottom" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto">
-        <button style="background-color: blue; padding: 5px 0px; border-radius: 5px;">
+      <div id="app-sidebar-footer">
+        <button id="sidebar-update-list-button">
           Update list
         </button>
-        <button style="background-color: orange; padding: 5px 0px; border-radius: 5px;" @click="removeLocalStorage()">
+        <button id="sidebar-reset-storage-button" @click="removeLocalStorage()">
           Reset localStorage
         </button>
       </div>
     </div>
-    <div id="hide-reveal-sidebar">
-      <div>
-        <button @click="showSidebar = !showSidebar">
-          <font-awesome-icon icon="fa-angle-left" v-if="showSidebar"/>
-          <font-awesome-icon icon="fa-angle-right" v-else />
-        </button>
-      </div>
+    <div id="hide-reveal-sidebar" style="background-color: #BBBBBB;">
+      <button @click="showSidebar = !showSidebar">
+        <font-awesome-icon icon="fa-angle-left" v-if="showSidebar"/>
+        <font-awesome-icon icon="fa-angle-right" v-else />
+      </button>
     </div>
-    <div id="main" style="display: flex; flex: 1; align-items: center; justify-content: center;">
+    <div id="app-main">
       <UserCard v-if="targetUser" :targetUser="targetUser" />
     </div>
   </div>
@@ -145,7 +147,71 @@
   getAllUsers();
 </script>
 
-<style scoped>
+<style>
+  #app-container {
+    display: flex;
+    height: 100vh;
+  }
+
+  #app-sidebar {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px; 
+  }
+
+  #app-sidebar-main {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  #clients-view-toggle {
+    color: black;
+  }
+
+  #clients-view-toggle-clients {
+    width: 50%;
+    background-color: gray;
+  } 
+
+  #clients-view-toggle-rating {
+    width: 50%;
+  }
+
+  #user-tab-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  #app-sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+  }
+
+  #sidebar-update-list-button {
+    background-color: blue;
+    padding: 5px 0px;
+    border-radius: 5px;
+  }
+
+  #sidebar-reset-storage-button {
+    background-color: orange;
+    padding: 5px 0px;
+    border-radius: 5px;
+  }
+
+  #app-main {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    background-color: #BBBBBB;
+  }
+
   button {
     cursor: pointer;
   }

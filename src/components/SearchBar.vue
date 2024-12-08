@@ -1,19 +1,12 @@
 <template>
   <div style="position: relative">
-    <div style="display: flex; gap: 3px; padding: 7px; background-color: #DDDDDD; border-radius: 10px;">
-    <input
-      placeholder="Enter username to search"
-      v-model="usernameToSearch"
-      style="width: 100%; font-size: 18px; border: none; outline: none"
-    />
-    <div style="display: flex; align-items: center; justify-content: center;">
-      <font-awesome-icon icon="fa-magnifying-glass" />
+    <div id="search-bar-input-and-icon">
+      <input id="search-bar-input" placeholder="Enter username to search" v-model="usernameToSearch"/>
+      <div class="search-bar-icon">
+        <font-awesome-icon icon="fa-magnifying-glass" />
+      </div>
     </div>
-    </div>
-    <div
-      v-if="showSearchOptions"
-      style="position: absolute; border: solid; background-color: white; width: 100%"
-    >
+    <div class="search-bar-dropdown-list" v-if="showSearchOptions">
       <div
         v-for="user in usersFound"
         :key="user.id"
@@ -60,3 +53,32 @@
   });
 
 </script>
+
+<style>
+  #search-bar-input-and-icon {
+    display: flex;
+    gap: 3px;
+    padding: 7px;
+    background-color: #DDDDDD;
+    border-radius: 10px;
+  }
+
+  #search-bar-input {
+    width: 100%;
+    font-size: 18px;
+    border: none;
+    outline: none
+  }
+
+  #search-bar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #search-bar-dropdown-list {
+    position: absolute;
+    background-color: white;
+    width: 100%
+  }
+</style>

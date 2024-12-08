@@ -1,7 +1,7 @@
 <template>
-  <div class="user-card" style="border: solid; width: 400px; height: 200px; border-radius: 20px; padding: 30px">
+  <div class="user-card">
     <div style="display: flex">
-      <img :src="targetUser.avatar" style="height: 128px; width: 128px; border-radius: 15px; margin-top: 20px;"/>
+      <img class="user-card-avatar" :src="targetUser.avatar"/>
       <div style="margin-left: 20px;">
         <div style="font-size: 36px;">
           {{ targetUser.first_name }}
@@ -10,7 +10,7 @@
         <div style="font-size: 24px;">
           {{ targetUser.email }}
         </div>
-        <div style="display:flex; gap: 10px">
+        <div class="user-card-rating-dock">
           <button @click="() => rating++">+</button>
           <div>{{ rating }} points</div>
           <button @click="() => rating--">-</button>
@@ -21,10 +21,7 @@
       </div>
     </div>
     <div style="margin-top: 20px;">
-      <button
-        @click="updateInfo"
-        style="background-color: #5555FF; padding: 5px 40px; border-radius: 5px; width: 100%; color: white"
-      >
+      <button class="user-card-save-button" @click="updateInfo">
         Save
       </button>
     </div>
@@ -60,3 +57,33 @@
     );
   }
 </script>
+
+<style>
+  .user-card {
+    width: 400px;
+    height: 200px;
+    border-radius: 20px;
+    padding: 30px;
+    background-color: white;
+  }
+
+  .user-card-avatar {
+    height: 128px;
+    width: 128px;
+    border-radius: 15px;
+    margin-top: 20px;
+  }
+
+  .user-card-rating-dock {
+    display:flex;
+    gap: 10px;
+  }
+
+  .user-card-save-button {
+    background-color: #5555FF;
+    padding: 5px 40px;
+    border-radius: 5px;
+    width: 100%;
+    color: white;
+  }
+</style>
