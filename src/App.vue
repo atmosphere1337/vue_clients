@@ -12,24 +12,14 @@
           @onUserFoundEvent="userFoundEvent"
         />
         <div style="display: flex; flex-direction: column; gap: 5px">
-          <div class="user-tab" v-for="user in users" :key="user.id">
-            <div @click="getSpecificUser(user.id)" style="display: flex; gap: 12px; border: solid; align-items: center; border-radius: 10px;">
-              <div v-if="listMode === 'clients'">
-                <img :src="user.avatar" style="height: 36px; width: 36px; border-radius: 100px;" />
-              </div>
-              <div v-else style="height: 36px; width: 36px; font-size: 24px; display: flex; align-items: center; justify-content: center;">
-                {{ localDataState.find(localUserInfo => localUserInfo.id === user.id).rating }}
-              </div>
-              <div>
-                {{ user.first_name }}
-                {{ user.last_name }}
-              </div>
-              <div style="margin-left: auto; padding: 0px 15px;" >
-                <font-awesome-icon icon="fa-angle-right" />
-              </div>
-            </div>
-          </div>
-
+          <UserTab
+            v-for="user in users"
+            :key="user.id"
+            :user="user"
+            :listMode="listMode"
+            :rating="localDataState.find(localUserInfo => localUserInfo.id === user.id).rating"
+            @onUserFoundEvent="getUserById"
+          />
         </div>
       </div>
       <div id="sidebar-bottom" style="display: flex; flex-direction: column; gap: 10px; margin-top: auto">
@@ -59,6 +49,7 @@
   import { watch, computed, ref } from 'vue';
   import UserCard from './components/UserCard.vue'
   import SearchBar from './components/SearchBar.vue';
+  import UserTab from './components/UserTab.vue';
   const LOCAL_STORAGE_NAME = 'clientsInfo'
   const showSidebar = ref(true);
   const listMode = ref('clients'); 
@@ -75,15 +66,7 @@
       })
       .catch('something went wrong');
   } 
-  const getSpecificUser = (id) => {
-    const identifiedUser = users.value.find(user => id === user.id)
-    if (identifiedUser) {
-      targetUser.value = identifiedUser;
-      const ratingUser = localDataState.value.find(user => user.id === targetUser.value.id);
-      targetUser.value.comment = ratingUser.comment;
-      targetUser.value.rating = ratingUser.rating;
-    }
-  }
+
   const userIds = computed(
     () => users.value.map(user => user.id)
   );
@@ -95,6 +78,13 @@
       sortUserByRating();
     }
   });
+
+  const getUserById = (id) => {
+    const identifiedUser = users.value.find(user => id === user.id);
+    if (identifiedUser) {
+      userFoundEvent(identifiedUser);
+    }
+  }
 
   const userFoundEvent = (identifiedUser) => {
     targetUser.value = identifiedUser;
