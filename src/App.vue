@@ -57,6 +57,7 @@
   import UserCard from './components/UserCard.vue'
   import SearchBar from './components/SearchBar.vue';
   import UserTab from './components/UserTab.vue';
+  import validateApiResponse from './utils/validateApiResponse';
   const LOCAL_STORAGE_NAME = 'clientsInfo'
   const showSidebar = ref(true);
   const listMode = ref('clients'); 
@@ -67,11 +68,12 @@
     fetch('https://reqres.in/api/users/')
       .then((response) => response.json())
       .then(json => {
+        validateApiResponse(json);
         users.value = json.data;
         syncBrowserDataAndState();
         sortUsers(listMode.value);
       })
-      .catch('something went wrong');
+      .catch(alert);
   } 
 
   const fullUsers = computed(() => {
@@ -108,6 +110,7 @@
       sortUserByRating();
     }
   }
+
   watch(listMode, sortUsers);
 
   const userFoundEvent = (identifiedUser) => {
