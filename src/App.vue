@@ -18,26 +18,25 @@
         </div>
         <SearchBar
           v-if="listMode === 'clients'"
-          :users="users"
+          :users="fullUsers"
           @onUserFoundEvent="userFoundEvent"
         />
       </div>
       <div id="user-tab-container">
         <UserTab
-          v-for="user in users"
-          :key="user.id"
-          :user="user"
+          v-for="fullUser in fullUsers"
+          :key="fullUser.id"
+          :user="fullUser"
           :listMode="listMode"
-          :rating="localDataState.find(localUserInfo => localUserInfo.id === user.id).rating"
-          @onUserFoundEvent="getUserById"
+          @onUserFoundEvent="userFoundEvent"
         />
       </div>
       <div id="app-sidebar-footer">
-        <button id="sidebar-update-list-button" class="blue-button">
-          Update list
+        <button id="sidebar-update-list-button" class="blue-button" @click="getAllUsers">
+          Reload list
         </button>
         <button id="sidebar-reset-storage-button" class="blue-button" @click="removeLocalStorage()">
-          Reset localStorage
+          Clear localStorage variable
         </button>
       </div>
     </div>
@@ -48,7 +47,7 @@
       </button>
     </div>
     <div id="app-main" class="app-background-color">
-      <UserCard v-if="targetUser" :targetUser="targetUser" />
+      <UserCard v-if="targetUser" :targetUser="targetUser" @onUserSave="userFoundEvent" />
     </div>
   </div>
 </template>
@@ -62,58 +61,70 @@
   const showSidebar = ref(true);
   const listMode = ref('clients'); 
   const users = ref([]);
+  const targetUserId = ref(null);
   const localDataState = ref(null);
-  const targetUser = ref(false);
   const getAllUsers = () => {
     fetch('https://reqres.in/api/users/')
       .then((response) => response.json())
       .then(json => {
         users.value = json.data;
-        syncStateWithLocalStorage();
-        sortUsersBySecondName();
+        syncBrowserDataAndState();
+        sortUsers(listMode.value);
       })
       .catch('something went wrong');
   } 
+
+  const fullUsers = computed(() => {
+    return users.value.map(
+      user => ({...user, ...localDataState.value.find((local) => local.id === user.id)})
+    )
+  });
 
   const userIds = computed(
     () => users.value.map(user => user.id)
   );
 
-  watch(listMode, (newMode) => {
-    if (newMode === 'clients') {
+  const targetUser = computed({
+    get() {
+      return fullUsers.value.find((user) => user.id === targetUserId.value);
+    },
+    set({id, rating, comment}) {
+      localDataState.value.forEach((localUser, index) => {
+        if (localUser.id === id) {
+          localDataState.value[index] = {id, rating, comment} ;
+          if (listMode.value === 'rating') {
+            sortUserByRating();
+          }
+          saveLocalDataToBrowser(localDataState.value);
+        }
+      })
+    },
+  });
+
+  const sortUsers = (mode) => {
+    if (mode === 'clients') {
       sortUsersBySecondName();
     } else {
       sortUserByRating();
     }
-  });
-
-  const getUserById = (id) => {
-    const identifiedUser = users.value.find(user => id === user.id);
-    if (identifiedUser) {
-      userFoundEvent(identifiedUser);
-    }
   }
+  watch(listMode, sortUsers);
 
   const userFoundEvent = (identifiedUser) => {
+    targetUserId.value = identifiedUser.id;
     targetUser.value = identifiedUser;
-    const ratingUser = localDataState.value.find(user => user.id === targetUser.value.id);
-    targetUser.value.comment = ratingUser.comment;
-    targetUser.value.rating = ratingUser.rating;
   }
 
-  const syncStateWithLocalStorage = () => {
-    if (JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME)) == undefined) {
-      localStorage.setItem(
-        LOCAL_STORAGE_NAME,
-        JSON.stringify(
-          users.value.map(user => ({id: user.id, rating: 0, comment: ''}))
-        )
+  const syncBrowserDataAndState = () => {
+    const browserData = getLocalDataFromBrowser()
+    if (browserData === undefined || browserData === null) {
+      console.log(users.value.map(user => ({id: user.id, rating: 0, comment: ''})));
+      saveLocalDataToBrowser(
+        users.value.map(user => ({id: user.id, rating: 0, comment: ''}))
       );
     }
     if (localDataState.value === null) {
-      localDataState.value = JSON.parse(
-        localStorage.getItem(LOCAL_STORAGE_NAME)
-      );
+      localDataState.value = getLocalDataFromBrowser();
       return;
     } 
     else {
@@ -122,19 +133,29 @@
           localDataState.value.push(
             {id: item.id, rating: 0, comment: ''}
           );
-          localStorage.setItem(
-            LOCAL_STORAGE_NAME,
-            JSON.stringify(
-              localDataState.value
-            )
-          );
         }
       }
+      saveLocalDataToBrowser(localDataState.value);
     }
   }
 
+  const saveLocalDataToBrowser = (localState) => {
+    localStorage.setItem(
+      LOCAL_STORAGE_NAME,
+      JSON.stringify(
+        localState
+      )
+    );
+  }
+
+  const getLocalDataFromBrowser = () => {
+      return JSON.parse(
+        localStorage.getItem(LOCAL_STORAGE_NAME)
+      );
+  }
+
   const removeLocalStorage = () => {
-    localDataState.value = null;
+    localDataState.value = localDataState.value.map(user => ({id: user.id, rating: 0, comment: ''}));
     localStorage.removeItem(LOCAL_STORAGE_NAME);
   }
 

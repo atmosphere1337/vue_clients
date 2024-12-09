@@ -21,7 +21,7 @@
       </div>
     </div>
     <div style="margin-top: 20px;">
-      <button class="user-card-save-button blue-button" @click="updateInfo">
+      <button class="user-card-save-button blue-button" @click="saveUser">
         Save
       </button>
     </div>
@@ -29,32 +29,22 @@
 </template>
 
 <script setup>
-  import {ref, watch, defineProps} from 'vue'
+  import {ref, watch, defineProps, defineEmits} from 'vue'
   const props = defineProps(['targetUser']);
+  const emit = defineEmits(['onUserSave']);
   const rating = ref('');
   const comment = ref('');
-  const LOCAL_STORAGE_NAME = 'clientsInfo';
 
   watch(() => props.targetUser, () => {
-    const ls = JSON.parse(
-      localStorage.getItem(LOCAL_STORAGE_NAME)
-    );
-    const user = ls.find(client => client.id === props.targetUser.id);
-    rating.value = user.rating;
-    comment.value = user.comment;
+    rating.value = props.targetUser.rating;
+    comment.value = props.targetUser.comment;
   }, {immediate: true, deep: true})
 
-  const updateInfo = () => {
-    const ls = JSON.parse(
-      localStorage.getItem(LOCAL_STORAGE_NAME)
-    );
-    const user = ls.find(client => client.id === props.targetUser.id);
-    user.rating = rating.value;
-    user.comment = comment.value;
-    localStorage.setItem(
-      LOCAL_STORAGE_NAME,
-      JSON.stringify(ls)
-    );
+  const saveUser = () => {
+    const editedUser = props.targetUser;
+    editedUser.rating = rating.value;
+    editedUser.comment = comment.value;
+    emit('onUserSave', editedUser);
   }
 </script>
 

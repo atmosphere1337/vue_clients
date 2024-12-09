@@ -1,11 +1,11 @@
 <template>
   <div class="user-tab">
-    <div class="user-tab" @click="$emit('onUserFoundEvent', props.user.id)" >
+    <div class="user-tab" @click="$emit('onUserFoundEvent', user)" >
       <div v-if="props.listMode === 'clients'">
         <img class="user-tab-avatar" :src="props.user.avatar" />
       </div>
       <div class="user-tab-rating" v-else>
-        {{ props.rating}}
+        {{ user.rating}}
       </div>
       <div>
         {{ user.first_name }}
@@ -20,7 +20,7 @@
 
 <script setup>
   import { defineProps } from 'vue';
-  const props = defineProps(['user', 'rating', 'listMode']);
+  const props = defineProps(['user', 'listMode']);
 </script>
 
 <style>
