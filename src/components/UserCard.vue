@@ -50,7 +50,8 @@
 
 <style>
   .user-card {
-    min-width: 400px;
+    min-width: 480px;
+    width: 400px;
     border-radius: 20px;
     padding: 30px;
     background-color: white;

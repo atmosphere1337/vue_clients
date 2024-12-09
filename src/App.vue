@@ -121,7 +121,6 @@
   const syncBrowserDataAndState = () => {
     const browserData = getLocalDataFromBrowser()
     if (browserData === undefined || browserData === null) {
-      console.log(users.value.map(user => ({id: user.id, rating: 0, comment: ''})));
       saveLocalDataToBrowser(
         users.value.map(user => ({id: user.id, rating: 0, comment: ''}))
       );
