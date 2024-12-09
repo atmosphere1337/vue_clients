@@ -2,11 +2,11 @@
   <div style="position: relative">
     <div id="search-bar-input-and-icon">
       <input id="search-bar-input" placeholder="Enter username to search" v-model="usernameToSearch"/>
-      <div class="search-bar-icon">
+      <div id="search-bar-icon">
         <font-awesome-icon icon="fa-magnifying-glass" />
       </div>
     </div>
-    <div class="search-bar-dropdown-list" v-if="showSearchOptions">
+    <div id="search-bar-dropdown-list" v-if="showSearchOptions">
       <div
         v-for="user in usersFound"
         :key="user.id"
@@ -59,7 +59,7 @@
     display: flex;
     gap: 3px;
     padding: 7px;
-    background-color: #DDDDDD;
+    background-color: white;
     border-radius: 10px;
   }
 

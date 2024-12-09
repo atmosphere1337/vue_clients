@@ -11,7 +11,7 @@
         {{ user.first_name }}
         {{ user.last_name }}
       </div>
-      <div class="user-tab-right-arrow">
+      <div class="user-tab-right-arrow arrow-color">
         <font-awesome-icon icon="fa-angle-right" />
       </div>
     </div>
@@ -19,19 +19,19 @@
 </template>
 
 <script setup>
-  import { defineProps, defineEmits } from 'vue';
+  import { defineProps } from 'vue';
   const props = defineProps(['user', 'rating', 'listMode']);
 </script>
 
-<style scoped>
+<style>
   .user-tab {
     display: flex;
+    width: 100%;
     gap: 12px;
     align-items: center;
     border-radius: 10px;
+    cursor: pointer;
   }
-
-  .user-tab:hover { background-color: #BBBBBB; }
 
   .user-tab-avatar {
     height: 36px;

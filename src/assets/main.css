@@ -1,3 +1,21 @@
 * {
-    margin: 0;
+  margin: 0;
+}
+
+.arrow-color { color: #3B89DF; }
+
+.sidebar-secondary-color { background-color: #DDEEF8; }
+
+.app-background-color, .user-tab:hover { background-color: #E1E1E1; }
+
+.blue-button { 
+  border: none;
+  padding: 10px 0px;
+  border-radius: 5px;
+  background-color: #1A7AFF; 
+  color: white;
+}
+
+.blue-button:hover {
+  opacity: 0.75;
 }

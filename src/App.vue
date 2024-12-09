@@ -1,12 +1,18 @@
 <template>
   <div id="app-container">
     <div id="app-sidebar" v-show="showSidebar">
-      <div id="app-sidebar-main">
+      <div id="app-sidebar-header" class="sidebar-secondary-color">
         <div id="clients-view-toggle">
-          <button id="clients-view-toggle-clients" @click="() => listMode = 'clients'">
+          <button
+            :class="{'clients-view-toggle-button': true, 'toggle-view-button-active': listMode == 'clients'}"
+            @click="() => listMode = 'clients'"
+          >
             Clients
           </button>
-          <button id="clients-view-toggle-rating" @click="() => listMode = 'rating'">
+          <button
+            :class="{'clients-view-toggle-button': true, 'toggle-view-button-active': listMode == 'rating'}"
+            @click="() => listMode = 'rating'"
+          >
             Rating
           </button>
         </div>
@@ -15,33 +21,33 @@
           :users="users"
           @onUserFoundEvent="userFoundEvent"
         />
-        <div id="user-tab-container">
-          <UserTab
-            v-for="user in users"
-            :key="user.id"
-            :user="user"
-            :listMode="listMode"
-            :rating="localDataState.find(localUserInfo => localUserInfo.id === user.id).rating"
-            @onUserFoundEvent="getUserById"
-          />
-        </div>
+      </div>
+      <div id="user-tab-container">
+        <UserTab
+          v-for="user in users"
+          :key="user.id"
+          :user="user"
+          :listMode="listMode"
+          :rating="localDataState.find(localUserInfo => localUserInfo.id === user.id).rating"
+          @onUserFoundEvent="getUserById"
+        />
       </div>
       <div id="app-sidebar-footer">
-        <button id="sidebar-update-list-button">
+        <button id="sidebar-update-list-button" class="blue-button">
           Update list
         </button>
-        <button id="sidebar-reset-storage-button" @click="removeLocalStorage()">
+        <button id="sidebar-reset-storage-button" class="blue-button" @click="removeLocalStorage()">
           Reset localStorage
         </button>
       </div>
     </div>
-    <div id="hide-reveal-sidebar" style="background-color: #BBBBBB;">
-      <button @click="showSidebar = !showSidebar">
+    <div id="hide-reveal-sidebar" class="app-background-color">
+      <button id="hide-reveal-button" class="sidebar-secondary-color arrow-color" @click="showSidebar = !showSidebar">
         <font-awesome-icon icon="fa-angle-left" v-if="showSidebar"/>
         <font-awesome-icon icon="fa-angle-right" v-else />
       </button>
     </div>
-    <div id="app-main">
+    <div id="app-main" class="app-background-color">
       <UserCard v-if="targetUser" :targetUser="targetUser" />
     </div>
   </div>
@@ -157,26 +163,35 @@
     width: 300px;
     display: flex;
     flex-direction: column;
-    padding: 10px; 
-  }
-
-  #app-sidebar-main {
-    display: flex;
-    flex-direction: column;
     gap: 15px;
   }
 
-  #clients-view-toggle {
-    color: black;
+  #app-sidebar > div:not(:first-child) {
+    padding: 10px;
   }
 
-  #clients-view-toggle-clients {
-    width: 50%;
-    background-color: gray;
-  } 
+  #app-sidebar-header {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+  }
 
-  #clients-view-toggle-rating {
+  #clients-view-toggle {
+    border-radius: 35px;
+    overflow: hidden;
+  }
+
+  .clients-view-toggle-button {
     width: 50%;
+    border: none;
+    padding: 10px;
+    background-color: #d3e1ea;
+  }
+
+  .toggle-view-button-active {
+    background-color: white;
+    color: black;
   }
 
   #user-tab-container {
@@ -193,15 +208,23 @@
   }
 
   #sidebar-update-list-button {
-    background-color: blue;
-    padding: 5px 0px;
-    border-radius: 5px;
+    
   }
 
   #sidebar-reset-storage-button {
-    background-color: orange;
-    padding: 5px 0px;
-    border-radius: 5px;
+    background-color: rgb(222, 125, 68);
+  }
+
+  #hide-reveal-sidebar {
+    padding-right: 10px;
+  }
+
+  #hide-reveal-button {
+    margin-top: 8px;
+    padding: 12px 3px;
+    border: none;
+    border-radius: 0px 5px 5px 0px;
+    box-shadow: 3px 0px 3px 3px #777777;
   }
 
   #app-main {
@@ -209,7 +232,6 @@
     flex: 1;
     align-items: center;
     justify-content: center;
-    background-color: #BBBBBB;
   }
 
   button {

@@ -2,7 +2,7 @@
   <div class="user-card">
     <div style="display: flex">
       <img class="user-card-avatar" :src="targetUser.avatar"/>
-      <div style="margin-left: 20px;">
+      <div id="user-card-text-info">
         <div style="font-size: 36px;">
           {{ targetUser.first_name }}
           {{ targetUser.last_name }}
@@ -11,17 +11,17 @@
           {{ targetUser.email }}
         </div>
         <div class="user-card-rating-dock">
-          <button @click="() => rating++">+</button>
-          <div>{{ rating }} points</div>
           <button @click="() => rating--">-</button>
+          <div>{{ rating }} points</div>
+          <button @click="() => rating++">+</button>
         </div>
         <div>
-          <textarea placeholder="comment" v-model="comment" />
+          <textarea id="comment-field" placeholder="comment" v-model="comment" />
         </div>
       </div>
     </div>
     <div style="margin-top: 20px;">
-      <button class="user-card-save-button" @click="updateInfo">
+      <button class="user-card-save-button blue-button" @click="updateInfo">
         Save
       </button>
     </div>
@@ -60,8 +60,7 @@
 
 <style>
   .user-card {
-    width: 400px;
-    height: 200px;
+    min-width: 400px;
     border-radius: 20px;
     padding: 30px;
     background-color: white;
@@ -74,16 +73,29 @@
     margin-top: 20px;
   }
 
+  #user-card-text-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 8px;
+    margin-left: 20px;
+  }
+
   .user-card-rating-dock {
+    width: 100%;
+    justify-content: space-between;
     display:flex;
     gap: 10px;
   }
 
-  .user-card-save-button {
-    background-color: #5555FF;
-    padding: 5px 40px;
-    border-radius: 5px;
+  #comment-field {
     width: 100%;
-    color: white;
+    height: 80px;
+    resize: none;
+  }
+
+  .user-card-save-button {
+    padding: 5px 40px;
+    width: 100%;
   }
 </style>
