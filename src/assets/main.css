@@ -19,3 +19,28 @@
 .blue-button:hover {
   opacity: 0.75;
 }
+
+@media screen and (max-width: 800px) {
+  #app-container {
+    flex-direction: column;
+  }
+
+  .user-card {
+    border-radius: 0px;
+    width: 100%;
+  }
+
+  #app-sidebar {
+    order: 3;
+    width: 100%;
+  }
+
+  #hide-reveal-sidebar {
+    display: none;
+    order: 2;
+  }
+
+  #hide-reveal-button {
+    width: 100%;
+  }
+}
