@@ -1,4 +1,4 @@
-# Take a look also at dev-2 branch pull request for latest changes if I have one
+# Take a look also at dev-3 branch pull request for latest changes if I have one
 
 ```sh
 git clone https://github.com/atmosphere1337/vue_clients.git 
