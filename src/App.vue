@@ -59,6 +59,7 @@
   import UserTab from './components/UserTab.vue';
   import validateApiResponse from './utils/validateApiResponse';
   import { saveLocalDataToBrowser, getLocalDataFromBrowser, removeLocalStorage} from './utils/localStorageService';
+  import { sortUserByRating, sortUsersBySecondName } from './utils/userSort';
   const showSidebar = ref(true);
   const listMode = ref('clients'); 
   const users = ref([]);
@@ -75,6 +76,7 @@
       })
       .catch(alert);
   } 
+  getAllUsers();
 
   window.addEventListener('resize', () => {
     if (window.screen.width <= 800) {
@@ -101,7 +103,7 @@
         if (localUser.id === id) {
           localDataState.value[index] = {id, rating, comment} ;
           if (listMode.value === 'rating') {
-            sortUserByRating();
+            users.value = sortUserByRating(fullUsers.value);
           }
           saveLocalDataToBrowser(localDataState.value);
         }
@@ -110,11 +112,9 @@
   });
 
   const sortUsers = (mode) => {
-    if (mode === 'clients') {
-      sortUsersBySecondName();
-    } else {
-      sortUserByRating();
-    }
+    users.value = (mode === 'clients')
+      ? sortUsersBySecondName(users.value)
+      : sortUserByRating(fullUsers.value);
   }
 
   watch(listMode, sortUsers);
@@ -146,19 +146,7 @@
       saveLocalDataToBrowser(localDataState.value);
     }
   }
-  const sortUsersBySecondName = () => {
-    users.value.sort(
-      (a, b) => a.last_name.localeCompare(b.last_name)
-    );
-  }
-
-  const sortUserByRating = () => {
-    users.value.sort(
-      (a, b) => localDataState.value.find(user => user.id === b.id).rating - localDataState.value.find(user => user.id === a.id).rating 
-    );
-  }
-
-  getAllUsers();
+  
 </script>
 
 <style>
