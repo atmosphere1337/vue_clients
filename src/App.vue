@@ -35,7 +35,7 @@
         <button id="sidebar-update-list-button" class="blue-button" @click="getAllUsers">
           Reload list
         </button>
-        <button id="sidebar-reset-storage-button" class="blue-button" @click="removeLocalStorage()">
+        <button id="sidebar-reset-storage-button" class="blue-button" @click="() => {localDataState = removeLocalStorage(localDataState)}">
           Clear localStorage variable
         </button>
       </div>
@@ -58,7 +58,7 @@
   import SearchBar from './components/SearchBar.vue';
   import UserTab from './components/UserTab.vue';
   import validateApiResponse from './utils/validateApiResponse';
-  const LOCAL_STORAGE_NAME = 'clientsInfo'
+  import { saveLocalDataToBrowser, getLocalDataFromBrowser, removeLocalStorage} from './utils/localStorageService';
   const showSidebar = ref(true);
   const listMode = ref('clients'); 
   const users = ref([]);
@@ -146,27 +146,6 @@
       saveLocalDataToBrowser(localDataState.value);
     }
   }
-
-  const saveLocalDataToBrowser = (localState) => {
-    localStorage.setItem(
-      LOCAL_STORAGE_NAME,
-      JSON.stringify(
-        localState
-      )
-    );
-  }
-
-  const getLocalDataFromBrowser = () => {
-      return JSON.parse(
-        localStorage.getItem(LOCAL_STORAGE_NAME)
-      );
-  }
-
-  const removeLocalStorage = () => {
-    localDataState.value = localDataState.value.map(user => ({id: user.id, rating: 0, comment: ''}));
-    localStorage.removeItem(LOCAL_STORAGE_NAME);
-  }
-
   const sortUsersBySecondName = () => {
     users.value.sort(
       (a, b) => a.last_name.localeCompare(b.last_name)
