@@ -47,4 +47,8 @@
   .app-main-hidable {
     display: none;
   }
+
+  .app-main-not-hidable {
+    flex: 0;
+  }
 }

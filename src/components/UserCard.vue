@@ -51,7 +51,7 @@
 <style>
   .user-card {
     min-width: 480px;
-    width: 400px;
+    box-sizing: border-box;
     border-radius: 20px;
     padding: 30px;
     background-color: white;
