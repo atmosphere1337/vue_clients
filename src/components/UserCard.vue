@@ -1,22 +1,22 @@
 <template>
   <div class="user-card">
     <div style="display: flex">
-      <img class="user-card-avatar" :src="targetUser.avatar"/>
+      <img class="user-card-avatar" :src="userStore.targetUser.avatar"/>
       <div id="user-card-text-info">
         <div style="font-size: 36px;">
-          {{ targetUser.first_name }}
-          {{ targetUser.last_name }}
+          {{ userStore.targetUser.first_name }}
+          {{ userStore.targetUser.last_name }}
         </div>
         <div style="font-size: 24px;">
-          {{ targetUser.email }}
+          {{ userStore.targetUser.email }}
         </div>
         <div class="user-card-rating-dock">
-          <button @click="() => rating--">-</button>
-          <div>{{ rating }} points</div>
-          <button @click="() => rating++">+</button>
+          <button @click="() => userStore.targetUser.rating--">-</button>
+          <div>{{ userStore.targetUser.rating }} points</div>
+          <button @click="() => userStore.targetUser.rating++">+</button>
         </div>
         <div>
-          <textarea id="comment-field" placeholder="comment" v-model="comment" />
+          <textarea id="comment-field" placeholder="comment" v-model="userStore.targetUser.comment" />
         </div>
       </div>
     </div>
@@ -29,22 +29,14 @@
 </template>
 
 <script setup>
-  import {ref, watch, defineProps, defineEmits} from 'vue'
-  const props = defineProps(['targetUser']);
-  const emit = defineEmits(['onUserSave']);
-  const rating = ref('');
-  const comment = ref('');
+  import {defineProps } from 'vue'
+  import { useUserStore } from '@/stores/users';
+  const userStore = useUserStore();
 
-  watch(() => props.targetUser, () => {
-    rating.value = props.targetUser.rating;
-    comment.value = props.targetUser.comment;
-  }, {immediate: true, deep: true})
+  const props = defineProps(['listMode']);
 
   const saveUser = () => {
-    const editedUser = props.targetUser;
-    editedUser.rating = rating.value;
-    editedUser.comment = comment.value;
-    emit('onUserSave', editedUser);
+    userStore.syncTargetUserWith(props.listMode);
   }
 </script>
 
