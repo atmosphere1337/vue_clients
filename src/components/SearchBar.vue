@@ -39,11 +39,7 @@
   }
 
   watch(usernameToSearch, (username) => {
-    if (usernameToSearch.value === '') {
-      showSearchOptions.value = false;
-    } else {
-      showSearchOptions.value = true;
-    }
+    showSearchOptions.value = usernameToSearch.value !== '';
 
     const identifiedUser = props.users.find(user => username === `${user.first_name} ${user.last_name}`)
     if (identifiedUser) {

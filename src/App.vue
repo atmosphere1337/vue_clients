@@ -35,7 +35,11 @@
         <button id="sidebar-update-list-button" class="blue-button" @click="getAllUsers">
           Reload list
         </button>
-        <button id="sidebar-reset-storage-button" class="blue-button" @click="removeLocalStorage()">
+        <button
+          id="sidebar-reset-storage-button"
+          class="blue-button"
+          @click="() => {localDataState = removeLocalStorage(localDataState)}"
+        >
           Clear localStorage variable
         </button>
       </div>
@@ -46,7 +50,10 @@
         <font-awesome-icon icon="fa-angle-right" v-else />
       </button>
     </div>
-    <div id="app-main" class="app-background-color">
+    <div
+      id="app-main"
+      :class="{'app-main-hidable': targetUserId == null, 'app-main-not-hidable': targetUserId != null, 'app-background-color': true}"
+    >
       <UserCard v-if="targetUser" :targetUser="targetUser" @onUserSave="userFoundEvent" />
     </div>
   </div>
@@ -58,7 +65,8 @@
   import SearchBar from './components/SearchBar.vue';
   import UserTab from './components/UserTab.vue';
   import validateApiResponse from './utils/validateApiResponse';
-  const LOCAL_STORAGE_NAME = 'clientsInfo'
+  import { saveLocalDataToBrowser, getLocalDataFromBrowser, removeLocalStorage} from './utils/localStorageService';
+  import { sortUserByRating, sortUsersBySecondName } from './utils/userSort';
   const showSidebar = ref(true);
   const listMode = ref('clients'); 
   const users = ref([]);
@@ -71,10 +79,17 @@
         validateApiResponse(json);
         users.value = json.data;
         syncBrowserDataAndState();
-        sortUsers(listMode.value);
+        listMode.value = 'clients';
       })
       .catch(alert);
   } 
+  getAllUsers();
+
+  window.addEventListener('resize', () => {
+    if (window.screen.width <= 800) {
+      showSidebar.value = true;
+    }
+  });
 
   const fullUsers = computed(() => {
     return users.value.map(
@@ -95,7 +110,7 @@
         if (localUser.id === id) {
           localDataState.value[index] = {id, rating, comment} ;
           if (listMode.value === 'rating') {
-            sortUserByRating();
+            users.value = sortUserByRating(fullUsers.value);
           }
           saveLocalDataToBrowser(localDataState.value);
         }
@@ -104,11 +119,9 @@
   });
 
   const sortUsers = (mode) => {
-    if (mode === 'clients') {
-      sortUsersBySecondName();
-    } else {
-      sortUserByRating();
-    }
+    users.value = (mode === 'clients')
+      ? sortUsersBySecondName(users.value)
+      : sortUserByRating(fullUsers.value);
   }
 
   watch(listMode, sortUsers);
@@ -140,40 +153,7 @@
       saveLocalDataToBrowser(localDataState.value);
     }
   }
-
-  const saveLocalDataToBrowser = (localState) => {
-    localStorage.setItem(
-      LOCAL_STORAGE_NAME,
-      JSON.stringify(
-        localState
-      )
-    );
-  }
-
-  const getLocalDataFromBrowser = () => {
-      return JSON.parse(
-        localStorage.getItem(LOCAL_STORAGE_NAME)
-      );
-  }
-
-  const removeLocalStorage = () => {
-    localDataState.value = localDataState.value.map(user => ({id: user.id, rating: 0, comment: ''}));
-    localStorage.removeItem(LOCAL_STORAGE_NAME);
-  }
-
-  const sortUsersBySecondName = () => {
-    users.value.sort(
-      (a, b) => a.last_name.localeCompare(b.last_name)
-    );
-  }
-
-  const sortUserByRating = () => {
-    users.value.sort(
-      (a, b) => localDataState.value.find(user => user.id === b.id).rating - localDataState.value.find(user => user.id === a.id).rating 
-    );
-  }
-
-  getAllUsers();
+  
 </script>
 
 <style>
@@ -250,7 +230,7 @@
     box-shadow: 3px 0px 3px 3px #777777;
   }
 
-  #app-main {
+  .app-main-hidable, .app-main-not-hidable {
     display: flex;
     flex: 1;
     align-items: center;
