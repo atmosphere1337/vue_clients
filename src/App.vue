@@ -22,11 +22,10 @@
       </div>
       <div id="user-tab-container">
         <UserTab
-          v-for="fullUser in fullUsers"
+          v-for="fullUser in userStore.getFullUsers"
           :key="fullUser.id"
           :user="fullUser"
           :listMode="listMode"
-          @onUserFoundEvent="userFoundEvent"
         />
       </div>
       <div id="app-sidebar-footer">
@@ -36,11 +35,10 @@
         <button
           id="sidebar-reset-storage-button"
           class="blue-button"
-          @click="() => {localDataState = removeLocalStorage(localDataState)}"
+          @click="userStore.resetLocalStorage"
         >
           Clear localStorage variable
         </button>
-        <div v-for="usr in userStore.apiUsers" :key="usr.id">{{ usr.first_name }}</div>
       </div>
     </div>
     <div id="hide-reveal-sidebar" class="app-background-color">
@@ -51,27 +49,21 @@
     </div>
     <div
       id="app-main"
-      :class="{'app-main-hidable': targetUserId == null, 'app-main-not-hidable': targetUserId != null, 'app-background-color': true}"
+      :class="{'app-main-hidable': userStore.targetUser == null, 'app-main-not-hidable': userStore.targetUser != null, 'app-background-color': true}"
     >
-      <UserCard v-if="targetUser" :targetUser="targetUser" @onUserSave="userFoundEvent" />
+      <UserCard v-if="userStore.targetUser != null" :listMode="listMode" />
     </div>
   </div>
 </template>
 
 <script setup>
-  import { watch, computed, ref } from 'vue';
+  import { watch, ref } from 'vue';
   import UserCard from './components/UserCard.vue'
   import SearchBar from './components/SearchBar.vue';
   import UserTab from './components/UserTab.vue';
   import validateApiResponse from './utils/validateApiResponse';
-  import { saveLocalDataToBrowser, getLocalDataFromBrowser, removeLocalStorage} from './utils/localStorageService';
-  import { sortUserByRating, sortUsersBySecondName } from './utils/userSort';
   const showSidebar = ref(true);
-  const listMode = ref('clients'); 
-  // const users = ref([]);
-  const targetUserId = ref(null);
-  const localDataState = ref(null);
-
+  const listMode = ref(null); 
 
   import { useUserStore } from './stores/users'; 
   const userStore = useUserStore();
@@ -84,9 +76,6 @@
 
         userStore.apiUsers = json.data;
         userStore.syncBrowserDataAndState();
-
-        // users.value = json.data;
-        // syncBrowserDataAndState();
         listMode.value = 'clients';
       })
       .catch(alert);
@@ -94,75 +83,13 @@
   getAllUsers();
 
   window.addEventListener('resize', () => {
-    if (window.screen.width <= 800) {
+    if (window.innerWidth <= 800) {
       showSidebar.value = true;
     }
   });
 
-  // const fullUsers = computed(() => {
-  //   return users.value.map(
-  //     user => ({...user, ...localDataState.value.find((local) => local.id === user.id)})
-  //   )
-  // });
+  watch(listMode, (newListMode) => userStore.sortUsers(newListMode));
 
-  // const userIds = computed(
-  //   () => users.value.map(user => user.id)
-  // );
-
-  // const targetUser = computed({
-  //   get() {
-  //     return fullUsers.value.find((user) => user.id === targetUserId.value);
-  //   },
-  //   set({id, rating, comment}) {
-  //     localDataState.value.forEach((localUser, index) => {
-  //       if (localUser.id === id) {
-  //         localDataState.value[index] = {id, rating, comment} ;
-  //         if (listMode.value === 'rating') {
-  //           users.value = sortUserByRating(fullUsers.value);
-  //         }
-  //         saveLocalDataToBrowser(localDataState.value);
-  //       }
-  //     })
-  //   },
-  // });
-
-  // const sortUsers = (mode) => {
-  //   users.value = (mode === 'clients')
-  //     ? sortUsersBySecondName(users.value)
-  //     : sortUserByRating(fullUsers.value);
-  // }
-
-  // watch(listMode, sortUsers);
-  watch(listMode, () => userStore.sortUsers(listMode.value));
-
-  // const userFoundEvent = (identifiedUser) => {
-  //   targetUserId.value = identifiedUser.id;
-  //   targetUser.value = identifiedUser;
-  // }
-
-  // const syncBrowserDataAndState = () => {
-  //   const browserData = getLocalDataFromBrowser()
-  //   if (browserData === undefined || browserData === null) {
-  //     saveLocalDataToBrowser(
-  //       users.value.map(user => ({id: user.id, rating: 0, comment: ''}))
-  //     );
-  //   }
-  //   if (localDataState.value === null) {
-  //     localDataState.value = getLocalDataFromBrowser();
-  //     return;
-  //   } 
-  //   else {
-  //     for (const item of users.value) {
-  //       if (!userIds.value.find((id) => id === item.id)) {
-  //         localDataState.value.push(
-  //           {id: item.id, rating: 0, comment: ''}
-  //         );
-  //       }
-  //     }
-  //     saveLocalDataToBrowser(localDataState.value);
-  //   }
-  // }
-  
 </script>
 
 <style>

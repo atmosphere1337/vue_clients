@@ -25,9 +25,6 @@
 
   const usernameToSearch = ref('');
   const showSearchOptions = ref(false);
-  // const props = defineProps(['users']);
-  // const emit = defineEmits(['onUserFoundEvent']);
-
 
   const usersFound = computed(() => 
     userStore.getFullUsers.filter(
@@ -47,7 +44,7 @@
 
     const identifiedUser = userStore.getFullUsers.find(user => username === `${user.first_name} ${user.last_name}`)
     if (identifiedUser) {
-      // emit('onUserFoundEvent', identifiedUser);
+      userStore.targetUser = identifiedUser;
       showSearchOptions.value = false;
     }
   });

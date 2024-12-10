@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { saveLocalDataToBrowser, getLocalDataFromBrowser } from '@/utils/localStorageService';
-import { sortUserByRating, sortUsersBySecondName } from './utils/userSort';
+import { saveLocalDataToBrowser, getLocalDataFromBrowser, removeLocalStorage } from '@/utils/localStorageService';
+import { sortUserByRating, sortUsersBySecondName } from '@/utils/userSort';
 
 export const useUserStore = defineStore('users', {
   state: () => {
@@ -8,13 +8,12 @@ export const useUserStore = defineStore('users', {
       apiUsers: [],
       localUsers: null,
       targetUser: null,
-      targetUserId: null,
     }
   },
   getters: {
     getUserIds: (state) => state.apiUsers.map(user => user.id),
     getFullUsers: (state) => state.apiUsers.map(
-      user => ({...user, ...this.localUsers.find((local) => local.id === user.id)})
+      user => ({...user, ...state.localUsers.find((local) => local.id === user.id)})
     ),
   },
   actions: {
@@ -58,7 +57,9 @@ export const useUserStore = defineStore('users', {
       this.apiUsers = (listMode === 'clients')
         ? sortUsersBySecondName(this.apiUsers)
         : sortUserByRating(this.getFullUsers);
+    },
+    resetLocalStorage() {
+      this.localUsers = removeLocalStorage(this.localUsers)
     }
-
   }
 });
