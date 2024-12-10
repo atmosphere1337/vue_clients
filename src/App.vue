@@ -35,7 +35,11 @@
         <button id="sidebar-update-list-button" class="blue-button" @click="getAllUsers">
           Reload list
         </button>
-        <button id="sidebar-reset-storage-button" class="blue-button" @click="() => {localDataState = removeLocalStorage(localDataState)}">
+        <button
+          id="sidebar-reset-storage-button"
+          class="blue-button"
+          @click="() => {localDataState = removeLocalStorage(localDataState)}"
+        >
           Clear localStorage variable
         </button>
       </div>
@@ -46,7 +50,10 @@
         <font-awesome-icon icon="fa-angle-right" v-else />
       </button>
     </div>
-    <div id="app-main" :class="{'app-main-hidable': targetUserId == null, 'app-main-not-hidable': targetUserId != null, 'app-background-color': true}">
+    <div
+      id="app-main"
+      :class="{'app-main-hidable': targetUserId == null, 'app-main-not-hidable': targetUserId != null, 'app-background-color': true}"
+    >
       <UserCard v-if="targetUser" :targetUser="targetUser" @onUserSave="userFoundEvent" />
     </div>
   </div>
@@ -72,7 +79,7 @@
         validateApiResponse(json);
         users.value = json.data;
         syncBrowserDataAndState();
-        sortUsers(listMode.value);
+        listMode.value = 'clients';
       })
       .catch(alert);
   } 
