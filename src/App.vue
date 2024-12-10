@@ -18,8 +18,6 @@
         </div>
         <SearchBar
           v-if="listMode === 'clients'"
-          :users="fullUsers"
-          @onUserFoundEvent="userFoundEvent"
         />
       </div>
       <div id="user-tab-container">
@@ -42,6 +40,7 @@
         >
           Clear localStorage variable
         </button>
+        <div v-for="usr in userStore.apiUsers" :key="usr.id">{{ usr.first_name }}</div>
       </div>
     </div>
     <div id="hide-reveal-sidebar" class="app-background-color">
@@ -69,16 +68,25 @@
   import { sortUserByRating, sortUsersBySecondName } from './utils/userSort';
   const showSidebar = ref(true);
   const listMode = ref('clients'); 
-  const users = ref([]);
+  // const users = ref([]);
   const targetUserId = ref(null);
   const localDataState = ref(null);
+
+
+  import { useUserStore } from './stores/users'; 
+  const userStore = useUserStore();
+
   const getAllUsers = () => {
     fetch('https://reqres.in/api/users/')
       .then((response) => response.json())
       .then(json => {
         validateApiResponse(json);
-        users.value = json.data;
-        syncBrowserDataAndState();
+
+        userStore.apiUsers = json.data;
+        userStore.syncBrowserDataAndState();
+
+        // users.value = json.data;
+        // syncBrowserDataAndState();
         listMode.value = 'clients';
       })
       .catch(alert);
@@ -91,68 +99,69 @@
     }
   });
 
-  const fullUsers = computed(() => {
-    return users.value.map(
-      user => ({...user, ...localDataState.value.find((local) => local.id === user.id)})
-    )
-  });
+  // const fullUsers = computed(() => {
+  //   return users.value.map(
+  //     user => ({...user, ...localDataState.value.find((local) => local.id === user.id)})
+  //   )
+  // });
 
-  const userIds = computed(
-    () => users.value.map(user => user.id)
-  );
+  // const userIds = computed(
+  //   () => users.value.map(user => user.id)
+  // );
 
-  const targetUser = computed({
-    get() {
-      return fullUsers.value.find((user) => user.id === targetUserId.value);
-    },
-    set({id, rating, comment}) {
-      localDataState.value.forEach((localUser, index) => {
-        if (localUser.id === id) {
-          localDataState.value[index] = {id, rating, comment} ;
-          if (listMode.value === 'rating') {
-            users.value = sortUserByRating(fullUsers.value);
-          }
-          saveLocalDataToBrowser(localDataState.value);
-        }
-      })
-    },
-  });
+  // const targetUser = computed({
+  //   get() {
+  //     return fullUsers.value.find((user) => user.id === targetUserId.value);
+  //   },
+  //   set({id, rating, comment}) {
+  //     localDataState.value.forEach((localUser, index) => {
+  //       if (localUser.id === id) {
+  //         localDataState.value[index] = {id, rating, comment} ;
+  //         if (listMode.value === 'rating') {
+  //           users.value = sortUserByRating(fullUsers.value);
+  //         }
+  //         saveLocalDataToBrowser(localDataState.value);
+  //       }
+  //     })
+  //   },
+  // });
 
-  const sortUsers = (mode) => {
-    users.value = (mode === 'clients')
-      ? sortUsersBySecondName(users.value)
-      : sortUserByRating(fullUsers.value);
-  }
+  // const sortUsers = (mode) => {
+  //   users.value = (mode === 'clients')
+  //     ? sortUsersBySecondName(users.value)
+  //     : sortUserByRating(fullUsers.value);
+  // }
 
-  watch(listMode, sortUsers);
+  // watch(listMode, sortUsers);
+  watch(listMode, () => userStore.sortUsers(listMode.value));
 
-  const userFoundEvent = (identifiedUser) => {
-    targetUserId.value = identifiedUser.id;
-    targetUser.value = identifiedUser;
-  }
+  // const userFoundEvent = (identifiedUser) => {
+  //   targetUserId.value = identifiedUser.id;
+  //   targetUser.value = identifiedUser;
+  // }
 
-  const syncBrowserDataAndState = () => {
-    const browserData = getLocalDataFromBrowser()
-    if (browserData === undefined || browserData === null) {
-      saveLocalDataToBrowser(
-        users.value.map(user => ({id: user.id, rating: 0, comment: ''}))
-      );
-    }
-    if (localDataState.value === null) {
-      localDataState.value = getLocalDataFromBrowser();
-      return;
-    } 
-    else {
-      for (const item of users.value) {
-        if (!userIds.value.find((id) => id === item.id)) {
-          localDataState.value.push(
-            {id: item.id, rating: 0, comment: ''}
-          );
-        }
-      }
-      saveLocalDataToBrowser(localDataState.value);
-    }
-  }
+  // const syncBrowserDataAndState = () => {
+  //   const browserData = getLocalDataFromBrowser()
+  //   if (browserData === undefined || browserData === null) {
+  //     saveLocalDataToBrowser(
+  //       users.value.map(user => ({id: user.id, rating: 0, comment: ''}))
+  //     );
+  //   }
+  //   if (localDataState.value === null) {
+  //     localDataState.value = getLocalDataFromBrowser();
+  //     return;
+  //   } 
+  //   else {
+  //     for (const item of users.value) {
+  //       if (!userIds.value.find((id) => id === item.id)) {
+  //         localDataState.value.push(
+  //           {id: item.id, rating: 0, comment: ''}
+  //         );
+  //       }
+  //     }
+  //     saveLocalDataToBrowser(localDataState.value);
+  //   }
+  // }
   
 </script>
 

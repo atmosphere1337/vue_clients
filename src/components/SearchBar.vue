@@ -20,13 +20,17 @@
 
 <script setup>
   import {ref, computed, defineProps, watch, defineEmits} from 'vue';
+  import { useUserStore } from '@/stores/users';
+  const userStore = useUserStore();  
+
   const usernameToSearch = ref('');
   const showSearchOptions = ref(false);
-  const props = defineProps(['users']);
-  const emit = defineEmits(['onUserFoundEvent']);
+  // const props = defineProps(['users']);
+  // const emit = defineEmits(['onUserFoundEvent']);
+
 
   const usersFound = computed(() => 
-    props.users.filter(
+    userStore.getFullUsers.filter(
       user => `${user.first_name} ${user.last_name}`
         .toLowerCase()
         .includes(usernameToSearch.value.toLowerCase())
@@ -41,9 +45,9 @@
   watch(usernameToSearch, (username) => {
     showSearchOptions.value = usernameToSearch.value !== '';
 
-    const identifiedUser = props.users.find(user => username === `${user.first_name} ${user.last_name}`)
+    const identifiedUser = userStore.getFullUsers.find(user => username === `${user.first_name} ${user.last_name}`)
     if (identifiedUser) {
-      emit('onUserFoundEvent', identifiedUser);
+      // emit('onUserFoundEvent', identifiedUser);
       showSearchOptions.value = false;
     }
   });
