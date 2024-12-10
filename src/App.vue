@@ -46,7 +46,7 @@
         <font-awesome-icon icon="fa-angle-right" v-else />
       </button>
     </div>
-    <div id="app-main" class="app-background-color">
+    <div id="app-main" :class="{'app-main-hidable': targetUserId == null, 'app-main-not-hidable': targetUserId != null, 'app-background-color': true}">
       <UserCard v-if="targetUser" :targetUser="targetUser" @onUserSave="userFoundEvent" />
     </div>
   </div>
@@ -75,6 +75,12 @@
       })
       .catch(alert);
   } 
+
+  window.addEventListener('resize', () => {
+    if (window.screen.width <= 800) {
+      showSidebar.value = true;
+    }
+  });
 
   const fullUsers = computed(() => {
     return users.value.map(
@@ -250,7 +256,7 @@
     box-shadow: 3px 0px 3px 3px #777777;
   }
 
-  #app-main {
+  .app-main-hidable, .app-main-not-hidable {
     display: flex;
     flex: 1;
     align-items: center;

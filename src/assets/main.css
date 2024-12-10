@@ -43,4 +43,8 @@
   #hide-reveal-button {
     width: 100%;
   }
+
+  .app-main-hidable {
+    display: none;
+  }
 }
