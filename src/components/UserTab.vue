@@ -1,6 +1,6 @@
 <template>
   <div class="user-tab">
-    <div class="user-tab" @click="$emit('onUserFoundEvent', user)" >
+    <div class="user-tab" @click="() => {userStore.targetUser = props.user}" >
       <div v-if="props.listMode === 'clients'">
         <img class="user-tab-avatar" :src="props.user.avatar" />
       </div>
@@ -20,6 +20,10 @@
 
 <script setup>
   import { defineProps } from 'vue';
+  import { useUserStore } from '@/stores/users';
+  const userStore = useUserStore();
+
+
   const props = defineProps(['user', 'listMode']);
 </script>
 
