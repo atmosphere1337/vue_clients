@@ -30,7 +30,7 @@
 
 <script setup>
   import {defineProps } from 'vue'
-  import { useUserStore } from '@/stores/users';
+  import { useUserStore } from '@/stores/userStore';
   const userStore = useUserStore();
 
   const props = defineProps(['listMode']);

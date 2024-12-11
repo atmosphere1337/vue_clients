@@ -19,8 +19,8 @@
 </template>
 
 <script setup>
-  import {ref, computed, defineProps, watch, defineEmits} from 'vue';
-  import { useUserStore } from '@/stores/users';
+  import {ref, computed, watch} from 'vue';
+  import { useUserStore } from '@/stores/userStore';
   const userStore = useUserStore();  
 
   const usernameToSearch = ref('');
