@@ -1,5 +1,5 @@
 <template>
-  <div id="app-container">
+  <div id="app-container" v-if="noErrors">
     <div id="app-sidebar" v-show="showSidebar">
       <div id="app-sidebar-header" class="sidebar-secondary-color">
         <div id="clients-view-toggle">
@@ -54,6 +54,9 @@
       <UserCard v-if="userStore.targetUser != null" :listMode="listMode" />
     </div>
   </div>
+  <div v-else>
+    {{ errMsg }}
+  </div>
 </template>
 
 <script setup>
@@ -61,11 +64,12 @@
   import UserCard from './components/UserCard.vue'
   import SearchBar from './components/SearchBar.vue';
   import UserTab from './components/UserTab.vue';
-  import validateApiResponse from './utils/validateApiResponse';
+  import validateApiResponse from '../utils/validateApiResponse';
   const showSidebar = ref(true);
   const listMode = ref(null); 
-
-  import { useUserStore } from './stores/users'; 
+  const noErrors = ref(true);
+  const errMsg = ref('');
+  import { useUserStore } from '../stores/users'; 
   const userStore = useUserStore();
 
   const getAllUsers = () => {
@@ -75,18 +79,35 @@
         validateApiResponse(json);
 
         userStore.apiUsers = json.data;
-        userStore.syncBrowserDataAndState();
+        if (import.meta.client) {
+          userStore.syncBrowserDataAndState();
+        }
+        if (import.meta.server) {
+          userStore.apiUsers = userStore.apiUsers.map(
+            user => ({...user, rating: 0, comment: ''})
+          );
+        }
         listMode.value = 'clients';
       })
-      .catch(alert);
+      .catch((err) => {
+        if (import.meta.client) {
+          alert(err);
+        }
+        if (import.meta.server) {
+          noErrors.value = false;
+          errMsg.value = err;
+        }
+      });
   } 
   getAllUsers();
 
-  window.addEventListener('resize', () => {
-    if (window.innerWidth <= 800) {
-      showSidebar.value = true;
-    }
-  });
+  if (import.meta.client) {
+    window.addEventListener('resize', () => {
+      if (window.innerWidth <= 800) {
+        showSidebar.value = true;
+      }
+    });
+  }
 
   watch(listMode, (newListMode) => userStore.sortUsers(newListMode));
 
@@ -144,10 +165,6 @@
     flex-direction: column;
     gap: 10px;
     margin-top: auto;
-  }
-
-  #sidebar-update-list-button {
-    
   }
 
   #sidebar-reset-storage-button {

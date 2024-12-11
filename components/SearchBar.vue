@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-  import {ref, computed, defineProps, watch, defineEmits} from 'vue';
+  import {ref, computed, watch} from 'vue';
   import { useUserStore } from '@/stores/users';
   const userStore = useUserStore();  
 
