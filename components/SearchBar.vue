@@ -20,7 +20,7 @@
 
 <script setup>
   import {ref, computed, watch} from 'vue';
-  import { useUserStore } from '@/stores/users';
+  import { useUserStore } from '@/stores/userStore';
   const userStore = useUserStore();  
 
   const usernameToSearch = ref('');

@@ -64,12 +64,12 @@
   import UserCard from './components/UserCard.vue'
   import SearchBar from './components/SearchBar.vue';
   import UserTab from './components/UserTab.vue';
-  import validateApiResponse from '../utils/validateApiResponse';
+  import validateApiResponse from '../utils/apiResponseValidate';
   const showSidebar = ref(true);
   const listMode = ref(null); 
   const noErrors = ref(true);
   const errMsg = ref('');
-  import { useUserStore } from '../stores/users'; 
+  import { useUserStore } from '../stores/userStore'; 
   const userStore = useUserStore();
 
   const getAllUsers = () => {
